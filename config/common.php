@@ -16,6 +16,9 @@ return [
     'bootstrap' => ['log'],
     'aliases' => [
         '@app' => dirname(__DIR__),
+        '@vendor' => dirname(__DIR__) . '/vendor',
+        '@bower' => dirname(__DIR__) . '/vendor/bower-asset',
+        '@npm' => dirname(__DIR__) . '/vendor/npm-asset',
         '@webroot' => dirname(__DIR__) . '/public',
         '@web' => '',
     ],

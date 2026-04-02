@@ -4,33 +4,32 @@ declare(strict_types=1);
 
 namespace app\modules\admin\controllers;
 
-use app\infrastructure\Persistence\ActiveRecord\UserRecord;
+use app\modules\admin\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
+use yii\web\Response;
 
-class SiteController extends Controller
+class SiteController extends BaseAdminController
 {
-    public $layout = 'main';
-
     public function behaviors(): array
     {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['login'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['index', 'logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+        $behaviors = parent::behaviors();
+        $behaviors['access'] = [
+            'class' => AccessControl::class,
+            'rules' => [
+                [
+                    'actions' => ['login'],
+                    'allow' => true,
+                ],
+                [
+                    'actions' => ['index', 'logout'],
+                    'allow' => true,
+                    'roles' => ['@'],
                 ],
             ],
         ];
+
+        return $behaviors;
     }
 
     public function actionIndex(): string
@@ -38,31 +37,29 @@ class SiteController extends Controller
         return $this->render('index');
     }
 
-    public function actionLogin()
+    public function actionLogin(): string|Response
     {
         if (!Yii::$app->user->isGuest) {
             return $this->redirect(['/admin/site/index']);
         }
 
-        if (Yii::$app->request->isPost) {
-            $username = (string)Yii::$app->request->post('username');
-            $password = (string)Yii::$app->request->post('password');
-            $user = UserRecord::findByUsername($username);
+        $model = new LoginForm();
 
-            if ($user !== null && $user->validatePassword($password)) {
-                Yii::$app->user->login($user, 3600 * 8);
-                return $this->redirect(['/admin/site/index']);
-            }
-
-            Yii::$app->session->setFlash('error', 'Неверный логин или пароль');
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            Yii::$app->session->setFlash('success', 'Вы успешно вошли в админку.');
+            return $this->redirect(['/admin/site/index']);
         }
 
-        return $this->render('login');
+        return $this->render('login', [
+            'model' => $model,
+        ]);
     }
 
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         Yii::$app->user->logout();
+        Yii::$app->session->setFlash('success', 'Вы вышли из админки.');
+
         return $this->redirect(['/admin/site/login']);
     }
 }

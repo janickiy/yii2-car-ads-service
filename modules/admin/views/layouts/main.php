@@ -1,40 +1,55 @@
 <?php
 
 use yii\helpers\Html;
+use yii\bootstrap5\BootstrapAsset;
+use yii\bootstrap5\BootstrapPluginAsset;
+
+BootstrapAsset::register($this);
+BootstrapPluginAsset::register($this);
+
 ?>
+<?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Админка</title>
+    <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><?= Html::encode($this->title ?: 'Админка') ?></title>
+    <?php $this->head() ?>
 </head>
 <body class="bg-light">
+<?php $this->beginBody() ?>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="/admin">Админка</a>
+        <?= Html::a('Админка', ['/admin/site/index'], ['class' => 'navbar-brand']) ?>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="adminNavbar">
-            <div class="navbar-nav me-auto">
-                <a class="nav-link" href="/admin/car/index">Объявления</a>
-                <a class="nav-link" href="/admin/car-option/index">Характеристики</a>
-                <a class="nav-link" href="/admin/user/index">Пользователи</a>
-            </div>
-            <div class="navbar-nav">
-                <?php if (!Yii::$app->user->isGuest): ?>
-                    <?= Html::a('Выйти', ['/admin/site/logout'], ['class' => 'nav-link']) ?>
-                <?php endif; ?>
-            </div>
+            <?php if (!Yii::$app->user->isGuest): ?>
+                <div class="navbar-nav me-auto">
+                    <?= Html::a('Объявления', ['/admin/car/index'], ['class' => 'nav-link']) ?>
+                    <?= Html::a('Характеристики', ['/admin/car-option/index'], ['class' => 'nav-link']) ?>
+                    <?= Html::a('Пользователи', ['/admin/user/index'], ['class' => 'nav-link']) ?>
+                </div>
+
+                <div class="navbar-nav ms-auto">
+                    <?= Html::a('Выйти', ['/admin/site/logout'], [
+                        'class' => 'nav-link',
+                        'data-method' => 'post',
+                    ]) ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </nav>
 
 <div class="container">
     <?php foreach (Yii::$app->session->getAllFlashes() as $type => $message): ?>
-        <div class="alert alert-<?= $type === 'error' ? 'danger' : 'success' ?>">
+        <div class="alert alert-<?= $type === 'error' ? 'danger' : ($type === 'warning' ? 'warning' : 'success') ?>">
             <?= Html::encode($message) ?>
         </div>
     <?php endforeach; ?>
@@ -42,6 +57,7 @@ use yii\helpers\Html;
     <?= $content ?>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<?php $this->endBody() ?>
 </body>
 </html>
+<?php $this->endPage() ?>
