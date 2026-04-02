@@ -25,6 +25,19 @@ class CarRecord extends ActiveRecord
         ];
     }
 
+    public function attributeLabels(): array
+    {
+        return [
+            'id' => 'ID',
+            'title' => 'Заголовок',
+            'description' => 'Описание',
+            'price' => 'Цена',
+            'photo_url' => 'Ссылка на фото',
+            'contacts' => 'Контакты',
+            'created_at' => 'Дата создания',
+        ];
+    }
+
     public function getOption(): ActiveQuery
     {
         return $this->hasOne(CarOptionRecord::class, ['car_id' => 'id']);

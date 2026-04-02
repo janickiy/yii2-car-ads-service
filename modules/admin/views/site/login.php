@@ -1,36 +1,34 @@
 <?php
 
-use yii\helpers\Html;
-
-$this->title = 'Login';
+$this->title = 'Вход в админку';
 ?>
 
 <div class="row justify-content-center">
     <div class="col-md-4">
-        <div class="card shadow">
+        <div class="card shadow-sm">
             <div class="card-body">
-                <h3 class="card-title text-center mb-4">Login</h3>
+                <h1 class="h3 mb-4 text-center">Вход в админку</h1>
 
                 <?php if (Yii::$app->session->hasFlash('error')): ?>
                     <div class="alert alert-danger">
-                        <?= Html::encode(Yii::$app->session->getFlash('error')) ?>
+                        <?= Yii::$app->session->getFlash('error') ?>
                     </div>
                 <?php endif; ?>
 
                 <form method="post">
-                    <input type="hidden" name="<?= Html::encode(Yii::$app->request->csrfParam) ?>" value="<?= Html::encode(Yii::$app->request->getCsrfToken()) ?>">
+                    <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->getCsrfToken() ?>">
 
                     <div class="mb-3">
-                        <input type="text" name="username" class="form-control" placeholder="Логин">
+                        <label class="form-label">Логин</label>
+                        <input type="text" name="username" class="form-control" placeholder="Введите логин">
                     </div>
 
                     <div class="mb-3">
-                        <input type="password" name="password" class="form-control" placeholder="Пароль">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" name="password" class="form-control" placeholder="Введите пароль">
                     </div>
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Войти</button>
-                    </div>
+                    <button class="btn btn-primary w-100">Войти</button>
                 </form>
             </div>
         </div>

@@ -24,6 +24,17 @@ class UserRecord extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public function attributeLabels(): array
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Логин',
+            'password_hash' => 'Пароль',
+            'created_at' => 'Дата создания',
+            'auth_key' => 'Ключ авторизации',
+        ];
+    }
+
     public static function findIdentity($id): ?IdentityInterface
     {
         return static::findOne($id);
