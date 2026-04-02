@@ -1,7 +1,7 @@
 /vendor/
-/node_modules/
 /runtime/*
+!/runtime/.gitkeep
 /web/assets/*
-/.env
+!/web/assets/.gitkeep
 /.idea/
-/.vscode/
+/.env

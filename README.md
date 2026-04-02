@@ -1,72 +1,81 @@
-# Yii2 clean project with Docker
+# Car Ads Service
 
-Чистый шаблон проекта на **Yii2 Basic** со сборкой через **Docker Compose**.
+Backend API сервис объявлений автомобилей на PHP 8, Yii2 и PostgreSQL.
 
-## Что внутри
+## Что реализовано
 
-- PHP 8.2 FPM
-- Nginx
-- PostgreSQL 15
-- Базовая структура Yii2
-- Конфигурация для запуска на `http://localhost:80`
+- REST API:
+  - `POST /api/v1/car/create`
+  - `GET /api/v1/car/{id}`
+  - `GET /api/v1/car/list?page=1`
+  - 
+- Многослойная архитектура:
+  - `application` — DTO и сервисы
+  - `domain` — сущности и контракты репозиториев
+  - `infrastructure` — ActiveRecord, DataMapper, реализации репозиториев
+  - `modules` — HTTP-слой API и admin
+- DI контейнер Yii2 для сервисов и репозиториев
+- PostgreSQL + миграции
+- Docker Compose + Nginx
+- Админка по адресу `http://localhost/admin`
+- CRUD для `car`, `car_option`, `user`
+- Unit-тест для сервиса создания объявления
 
-## Структура
+## Данные БД
 
-- `docker-compose.yml` — запуск контейнеров
-- `docker/Dockerfile` — PHP-FPM образ
-- `docker/nginx/default.conf` — конфиг Nginx
-- `composer.json` — зависимости Yii2
-- `config/` — конфиги приложения
-- `controllers/`, `models/`, `views/` — базовая структура
-- `commands/` — консольные команды и миграции
+- host: `localhost`
+- port: `5432`
+- db: `loans`
+- user: `user`
+- password: `password`
+
+## Доступ в админку
+
+- login: `admin`
+- password: `1234567`
 
 ## Запуск
 
 ```bash
 cp .env.example .env
 docker compose up --build -d
+```
+
+После запуска приложение доступно на:
+
+- API и admin: `http://localhost`
+- Admin: `http://localhost/admin`
+
+## Первый запуск внутри PHP-контейнера
+
+```bash
 docker compose exec php composer install
-docker compose exec php php init --env=Development --overwrite=All
-docker compose exec php php yii serve --help
+docker compose exec php php yii migrate --interactive=0
 ```
 
-Для этого шаблона веб-сервером выступает **Nginx**, поэтому встроенный сервер Yii использовать не нужно.
-
-После запуска приложение доступно по адресу:
-
-```text
-http://localhost
-```
-
-## База данных PostgreSQL
-
-По умолчанию:
-
-- host: `db`
-- port: `5432`
-- database: `loans`
-- user: `user`
-- password: `password`
-
-## Установка зависимостей
-
-Если `composer install` попросит плагин Composer, разрешите его.
-
-## Команды
-
-Создать миграцию:
+## Проверка тестов
 
 ```bash
-docker compose exec php php yii migrate/create create_example_table
+docker compose exec php vendor/bin/phpunit
 ```
 
-Применить миграции:
+## Примечания
+
+- Миграции созданы в соответствии с заданием.
+- Администратор создается миграцией автоматически.
+- Технические характеристики автомобиля опциональны, но при передаче обязательны все поля.
+- Для списка объявлений используется пагинация по 10 элементов.
+
+## Что нужно сделать перед сдачей
 
 ```bash
-docker compose exec php php yii migrate
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin <your-github-repository>
+git push -u origin main
 ```
 
-## Примечание
+## Затраченное время
 
-Это **чистый проектный шаблон**, подготовленный под дальнейшую разработку.
-Для первого запуска внутри контейнера выполняется `composer install`, чтобы подтянуть Yii2 и зависимости.
+Оценка на реализацию данного проекта: 5 часов.

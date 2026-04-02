@@ -1,25 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\controllers;
 
-use Yii;
-use yii\web\Controller;
-use yii\web\Response;
-
-class SiteController extends Controller
+class SiteController extends \yii\web\Controller
 {
     public function actionIndex(): string
     {
-        return $this->render('index');
+        return 'Car Ads Service is running';
     }
 
-    public function actionError(): Response|string
+    public function actionError(): string
     {
-        $exception = Yii::$app->errorHandler->exception;
-        if ($exception !== null) {
-            return $this->render('error', ['exception' => $exception]);
-        }
-
-        return '';
+        return 'Application error';
     }
 }

@@ -1,25 +1,14 @@
 <?php
 
-$db = require __DIR__ . '/db.php';
+declare(strict_types=1);
 
-return [
-    'id' => 'basic-console',
-    'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
-    'controllerNamespace' => 'app\\commands',
-    'components' => [
-        'cache' => [
-            'class' => yii\caching\FileCache::class,
-        ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
-                [
-                    'class' => yii\log\FileTarget::class,
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
-        ],
-        'db' => $db,
-    ],
+require __DIR__ . '/bootstrap.php';
+
+$config = require __DIR__ . '/common.php';
+$config['controllerNamespace'] = 'app\\commands';
+$config['bootstrap'] = ['log'];
+$config['modules']['gii'] = [
+    'class' => yii\gii\Module::class,
 ];
+
+return $config;

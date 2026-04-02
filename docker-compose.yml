@@ -1,8 +1,18 @@
-version: '3.9'
-
 services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: car_ads_php
+    working_dir: /app
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+
   nginx:
     image: nginx:1.27-alpine
+    container_name: car_ads_nginx
     ports:
       - "80:80"
     volumes:
@@ -11,28 +21,15 @@ services:
     depends_on:
       - php
 
-  php:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    working_dir: /app
-    volumes:
-      - ./:/app
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: loans
-      DB_USER: user
-      DB_PASSWORD: password
-
   db:
-    image: postgres:15-alpine
-    ports:
-      - "5432:5432"
+    image: postgres:16-alpine
+    container_name: car_ads_db
     environment:
       POSTGRES_DB: loans
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
