@@ -16,6 +16,10 @@ final readonly class CreateCarService
     {
     }
 
+    /**
+     * @param CreateCarRequest $request
+     * @return Car
+     */
     public function handle(CreateCarRequest $request): Car
     {
         if ($request->title === '' || $request->description === '' || $request->photoUrl === '' || $request->contacts === '') {

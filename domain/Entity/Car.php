@@ -18,6 +18,11 @@ final class Car
     ) {
     }
 
+    /**
+     * @param int $id
+     * @param string $createdAt
+     * @return self
+     */
     public function withIdAndCreatedAt(int $id, string $createdAt): self
     {
         return new self(

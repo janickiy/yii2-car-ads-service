@@ -12,6 +12,11 @@ final readonly class ListCarsService
     {
     }
 
+    /**
+     * @param int $page
+     * @param int $perPage
+     * @return array
+     */
     public function handle(int $page, int $perPage): array
     {
         $page = max($page, 1);

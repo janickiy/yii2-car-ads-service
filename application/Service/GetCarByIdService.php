@@ -13,6 +13,10 @@ final readonly class GetCarByIdService
     {
     }
 
+    /**
+     * @param int $id
+     * @return Car|null
+     */
     public function handle(int $id): ?Car
     {
         return $this->carRepository->findById($id);
