@@ -1,2 +1,7 @@
-<h1>Панель администратора</h1>
-<p>Выберите раздел: cars, car options или users.</p>
+<?php
+
+$this->title = 'Admin';
+?>
+
+<h1>Admin panel</h1>
+<p>Админка работает 🚀</p>

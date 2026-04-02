@@ -5,14 +5,26 @@ declare(strict_types=1);
 $envPath = dirname(__DIR__) . '/.env';
 if (is_file($envPath)) {
     foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-        if (str_starts_with(trim($line), '#') || !str_contains($line, '=')) {
+        $line = trim($line);
+
+        if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
             continue;
         }
+
         [$name, $value] = explode('=', $line, 2);
-        $_ENV[trim($name)] = trim($value);
-        $_SERVER[trim($name)] = trim($value);
+        $name = trim($name);
+        $value = trim($value);
+
+        $_ENV[$name] = $value;
+        $_SERVER[$name] = $value;
     }
 }
 
-define('YII_ENV', $_ENV['APP_ENV'] ?? 'dev');
-define('YII_DEBUG', (bool)($_ENV['APP_DEBUG'] ?? true));
+if (!defined('YII_ENV')) {
+    define('YII_ENV', $_ENV['APP_ENV'] ?? 'dev');
+}
+
+if (!defined('YII_DEBUG')) {
+    $debug = $_ENV['APP_DEBUG'] ?? '1';
+    define('YII_DEBUG', in_array((string)$debug, ['1', 'true', 'on'], true));
+}

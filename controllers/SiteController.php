@@ -2,17 +2,21 @@
 
 declare(strict_types=1);
 
-namespace app\controllers;
+namespace app\modules\admin\controllers;
 
-class SiteController extends \yii\web\Controller
+use yii\web\Controller;
+
+class SiteController extends Controller
 {
+    public $layout = 'main';
+
     public function actionIndex(): string
     {
-        return 'Car Ads Service is running';
+        return $this->render('index');
     }
 
-    public function actionError(): string
+    public function actionLogin(): string
     {
-        return 'Application error';
+        return $this->render('login');
     }
 }
