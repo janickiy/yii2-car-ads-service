@@ -42,8 +42,11 @@ $config['components']['urlManager'] = [
         'GET api/v1/car/list' => 'api/v1/car/list',
         'GET api/v1/car/<id:\d+>' => 'api/v1/car/view',
 
+
         'admin' => 'admin/site/index',
         'admin/' => 'admin/site/index',
+        'admin/site/login' => 'admin/site/login',
+
         'admin/<controller:[\w-]+>/<action:[\w-]+>' => 'admin/<controller>/<action>',
         'admin/<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>' => 'admin/<controller>/<action>',
     ],

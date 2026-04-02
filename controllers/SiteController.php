@@ -2,21 +2,29 @@
 
 declare(strict_types=1);
 
-namespace app\modules\admin\controllers;
+namespace app\controllers;
 
 use yii\web\Controller;
 
 class SiteController extends Controller
 {
-    public $layout = 'main';
-
     public function actionIndex(): string
     {
-        return $this->render('index');
+        return 'Car Ads Service';
     }
 
-    public function actionLogin(): string
+    public function actionError(): string
     {
-        return $this->render('login');
+        $exception = \Yii::$app->errorHandler->exception;
+
+        if ($exception === null) {
+            return 'Unknown error';
+        }
+
+        return $this->renderContent(sprintf(
+            '<h1>%s</h1><p>%s</p>',
+            htmlspecialchars((string)$exception->getCode(), ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($exception->getMessage(), ENT_QUOTES, 'UTF-8')
+        ));
     }
 }
