@@ -1,7 +1,39 @@
+ignore
+
+# Зависимости (устанавливаются через Composer)
 /vendor/
+
+# Временные файлы и кэш приложения
 /runtime/*
-!/runtime/.gitkeep
+!/runtime/.gitignore
+
+# Ресурсы (assets), генерируемые фреймворком
 /web/assets/*
-!/web/assets/.gitkeep
-/.idea/
-/.env
+!/web/assets/.gitignore
+
+# Для Advanced Template: локальные конфиги и index-файлы
+/common/config/main-local.php
+/common/config/params-local.php
+/frontend/config/main-local.php
+/frontend/config/params-local.php
+/backend/config/main-local.php
+/backend/config/params-local.php
+/console/config/main-local.php
+/console/config/params-local.php
+
+# Точка входа в локальной среде (если используется init)
+/frontend/web/index.php
+/frontend/web/index-test.php
+/backend/web/index.php
+/backend/web/index-test.php
+/yii
+
+# IDE и системные файлы
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Файлы окружения
+.env
+.env.local
