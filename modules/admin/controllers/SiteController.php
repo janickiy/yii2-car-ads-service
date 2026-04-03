@@ -45,16 +45,17 @@ class SiteController extends Controller
         }
 
         if (Yii::$app->request->isPost) {
-            $username = (string)Yii::$app->request->post('username');
-            $password = (string)Yii::$app->request->post('password');
+            $username = (string) Yii::$app->request->post('username');
+            $password = (string) Yii::$app->request->post('password');
             $user = UserRecord::findByUsername($username);
 
             if ($user !== null && $user->validatePassword($password)) {
                 Yii::$app->user->login($user, 3600 * 8);
+                Yii::$app->session->setFlash('success', 'Вы успешно вошли в админку.');
                 return $this->redirect(['/admin/site/index']);
             }
 
-            Yii::$app->session->setFlash('error', 'Неверный логин или пароль');
+            Yii::$app->session->setFlash('error', 'Неверный логин или пароль.');
         }
 
         return $this->render('login');
@@ -63,6 +64,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+        Yii::$app->session->setFlash('success', 'Вы вышли из админки.');
         return $this->redirect(['/admin/site/login']);
     }
 }

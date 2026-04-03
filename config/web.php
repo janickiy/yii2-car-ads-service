@@ -34,6 +34,11 @@ $config['components']['cache'] = [
     'class' => yii\caching\FileCache::class,
 ];
 
+$config['components']['assetManager'] = [
+    'basePath' => dirname(__DIR__) . '/public/assets',
+    'baseUrl' => '/assets',
+];
+
 $config['components']['urlManager'] = [
     'enablePrettyUrl' => true,
     'showScriptName' => false,

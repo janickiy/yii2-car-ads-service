@@ -2,15 +2,15 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
-<h1><?= $model->isNewRecord ? 'Create car option' : 'Update car option' ?></h1>
+<h1><?= $model->isNewRecord ? 'Создать характеристики' : 'Редактировать характеристики' ?></h1>
 <?php $form = ActiveForm::begin(); ?>
-<?= $form->field($model, 'car_id') ?>
-<?= $form->field($model, 'brand') ?>
-<?= $form->field($model, 'model') ?>
-<?= $form->field($model, 'year') ?>
-<?= $form->field($model, 'body') ?>
-<?= $form->field($model, 'mileage') ?>
+<?= $form->field($model, 'car_id')->label('ID объявления') ?>
+<?= $form->field($model, 'brand')->label('Марка') ?>
+<?= $form->field($model, 'model')->label('Модель') ?>
+<?= $form->field($model, 'year')->label('Год') ?>
+<?= $form->field($model, 'body')->label('Кузов') ?>
+<?= $form->field($model, 'mileage')->label('Пробег') ?>
 <div class="form-group">
-    <?= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
+    <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
 </div>
 <?php ActiveForm::end(); ?>

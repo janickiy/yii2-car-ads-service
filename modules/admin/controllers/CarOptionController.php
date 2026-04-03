@@ -1,46 +1,61 @@
 <?php
-
 declare(strict_types=1);
-
 namespace app\modules\admin\controllers;
 
 use app\infrastructure\Persistence\ActiveRecord\CarOptionRecord;
+use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class CarOptionController extends BaseAdminController
 {
+    public function behaviors(): array
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['verbs'] = ['class' => VerbFilter::class, 'actions' => ['delete' => ['POST']]];
+        return $behaviors;
+    }
+
     public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => CarOptionRecord::find()->orderBy(['id' => SORT_DESC]),
             'pagination' => ['pageSize' => 20],
         ]);
-
-        return $this->render('index', compact('dataProvider'));
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
-    public function actionCreate()
+    public function actionView(int $id): string
+    {
+        return $this->render('view', ['model' => $this->findModel($id)]);
+    }
+
+    public function actionCreate(): string|Response
     {
         $model = new CarOptionRecord();
-        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Характеристики созданы.');
+            return $this->redirect(['view', 'id' => $model->id]);
         }
-        return $this->render('form', compact('model'));
+        return $this->render('form', ['model' => $model]);
     }
 
-    public function actionUpdate(int $id)
+    public function actionUpdate(int $id): string|Response
     {
         $model = $this->findModel($id);
-        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Характеристики обновлены.');
+            return $this->redirect(['view', 'id' => $model->id]);
         }
-        return $this->render('form', compact('model'));
+        return $this->render('form', ['model' => $model]);
     }
 
-    public function actionDelete(int $id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
+        Yii::$app->session->setFlash('success', 'Характеристики удалены.');
         return $this->redirect(['index']);
     }
 
@@ -48,7 +63,7 @@ class CarOptionController extends BaseAdminController
     {
         $model = CarOptionRecord::findOne($id);
         if ($model === null) {
-            throw new NotFoundHttpException('Car option not found.');
+            throw new NotFoundHttpException('Характеристики не найдены.');
         }
         return $model;
     }
