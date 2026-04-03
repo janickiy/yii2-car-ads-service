@@ -5,8 +5,7 @@ declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 $config = require __DIR__ . '/common.php';
-
-$config['controllerNamespace'] = 'app\\controllers';
+$config['controllerNamespace'] = 'app\controllers';
 $config['defaultRoute'] = 'site/index';
 
 $config['components']['request'] = [
@@ -20,6 +19,7 @@ $config['components']['user'] = [
     'identityClass' => app\infrastructure\Persistence\ActiveRecord\UserRecord::class,
     'enableAutoLogin' => false,
     'loginUrl' => ['/admin/site/login'],
+    'identityCookie' => ['name' => '_identity-backend'],
 ];
 
 $config['components']['session'] = [
@@ -42,11 +42,12 @@ $config['components']['urlManager'] = [
         'GET api/v1/car/list' => 'api/v1/car/list',
         'GET api/v1/car/<id:\d+>' => 'api/v1/car/view',
 
+        'swagger' => 'swagger/index',
+        'swagger/openapi.json' => 'swagger/openapi',
 
         'admin' => 'admin/site/index',
         'admin/' => 'admin/site/index',
         'admin/site/login' => 'admin/site/login',
-
         'admin/<controller:[\w-]+>/<action:[\w-]+>' => 'admin/<controller>/<action>',
         'admin/<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>' => 'admin/<controller>/<action>',
     ],

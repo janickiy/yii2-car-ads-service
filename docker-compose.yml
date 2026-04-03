@@ -8,8 +8,7 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
   nginx:
     image: nginx:1.27-alpine
@@ -23,20 +22,16 @@ services:
       - php
 
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: car_ads_db
     environment:
       POSTGRES_DB: loans
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
-      - ./docker/postgres/data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d loans"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

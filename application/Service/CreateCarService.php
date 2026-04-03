@@ -16,10 +16,6 @@ final readonly class CreateCarService
     {
     }
 
-    /**
-     * @param CreateCarRequest $request
-     * @return Car
-     */
     public function handle(CreateCarRequest $request): Car
     {
         if ($request->title === '' || $request->description === '' || $request->photoUrl === '' || $request->contacts === '') {
@@ -32,13 +28,17 @@ final readonly class CreateCarService
 
         $option = null;
         if ($request->options !== null) {
+            if ($request->options['year'] <= 0 || $request->options['mileage'] < 0) {
+                throw new DomainValidationException('Option year must be positive and mileage must not be negative.');
+            }
+
             $option = new CarOption(
                 id: null,
-                brand: (string)$request->options['brand'],
-                model: (string)$request->options['model'],
-                year: (int)$request->options['year'],
-                body: (string)$request->options['body'],
-                mileage: (int)$request->options['mileage'],
+                brand: (string) $request->options['brand'],
+                model: (string) $request->options['model'],
+                year: (int) $request->options['year'],
+                body: (string) $request->options['body'],
+                mileage: (int) $request->options['mileage'],
             );
         }
 

@@ -29,7 +29,7 @@ class CarController extends Controller
     {
         try {
             $body = Yii::$app->request->bodyParams;
-            $dto = CreateCarRequest::fromArray($body);
+            $dto = CreateCarRequest::fromArray(is_array($body) ? $body : []);
             $car = Yii::$container->get(CreateCarService::class)->handle($dto);
 
             Yii::$app->response->statusCode = 201;
@@ -43,7 +43,7 @@ class CarController extends Controller
     {
         $car = Yii::$container->get(GetCarByIdService::class)->handle($id);
         if ($car === null) {
-            throw new NotFoundHttpException('Car ad not found.');
+            throw new NotFoundHttpException('Объявление не найдено.');
         }
 
         return $car->toArray();

@@ -5,75 +5,134 @@ Backend API сервис объявлений автомобилей на PHP 8,
 ## Что реализовано
 
 - REST API:
-  - POST /api/v1/car/create
-  - GET /api/v1/car/{id}
-  - GET /api/v1/car/list?page=1
-
+  - `POST /api/v1/car/create`
+  - `GET /api/v1/car/{id}`
+  - `GET /api/v1/car/list?page=1`
+- Swagger UI:
+  - `GET /swagger`
+  - `GET /swagger/openapi.json`
 - Многослойная архитектура:
-  - application — DTO и сервисы
-  - domain — сущности и контракты репозиториев
-  - infrastructure — ActiveRecord, DataMapper, реализации репозиториев
-  - modules — HTTP-слой API и admin
-- DI контейнер Yii2 для сервисов и репозиториев
+  - `application` — DTO и сервисы
+  - `domain` — сущности, контракты репозиториев и DataMapper интерфейс
+  - `infrastructure` — ActiveRecord, DataMapper, реализация репозитория
+  - `modules` — HTTP-слой API и admin
+- DI контейнер Yii2 для сервисов, репозитория и DataMapper
 - PostgreSQL + миграции
 - Docker Compose + Nginx
-- Админка по адресу http://localhost/admin
-- CRUD для car, car_option, user
+- Админка по адресу `http://localhost/admin`
+- CRUD для `car`, `car_option`, `user`
 - Unit-тест для сервиса создания объявления
 
 ## Данные БД
 
-- host: localhost
-- port: 5432
-- db: loans
-- user: user
-- password: password
+- host: `localhost`
+- port: `5432`
+- db: `loans`
+- user: `user`
+- password: `password`
 
 ## Доступ в админку
 
-- login: admin
-- password: 1234567
+- login: `admin`
+- password: `1234567`
 
 ## Запуск
 
-bash
-
+```bash
 cp .env.example .env
 docker compose up --build -d
+```
 
 После запуска приложение доступно на:
 
-- API и admin: http://localhost
-- Admin: http://localhost/admin
+- API и admin: `http://localhost`
+- Swagger UI: `http://localhost/swagger`
+- Admin: `http://localhost/admin`
 
 ## Первый запуск внутри PHP-контейнера
 
-bash
-
+```bash
 docker compose exec php composer install
 docker compose exec php php yii migrate --interactive=0
-
+```
 
 ## Проверка тестов
 
-bash
-
+```bash
 docker compose exec php vendor/bin/phpunit
+```
 
+## Примеры curl
+
+### 1. Создать объявление
+
+```bash
+curl -X POST http://localhost/api/v1/car/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Toyota Camry 2020",
+    "description": "Седан в хорошем состоянии",
+    "price": 24500,
+    "photo_url": "https://example.com/camry.jpg",
+    "contacts": "+7-900-123-45-67",
+    "options": [
+      {
+        "brand": "Toyota",
+        "model": "Camry",
+        "year": 2020,
+        "body": "sedan",
+        "mileage": 54000
+      }
+    ]
+  }'
+```
+
+### 2. Получить объявление по ID
+
+```bash
+curl http://localhost/api/v1/car/1
+```
+
+### 3. Получить список объявлений
+
+```bash
+curl "http://localhost/api/v1/car/list?page=1"
+```
+
+## Формат ответов API
+
+### POST `/api/v1/car/create`
+- `201 Created`
+- возвращает созданное объявление с `options` или `null`
+
+### GET `/api/v1/car/{id}`
+- `200 OK`
+- возвращает одно объявление с техническими характеристиками, если они есть
+- `404`, если запись не найдена
+
+### GET `/api/v1/car/list`
+- `200 OK`
+- возвращает массив `items` и блок `pagination`
+
+## Swagger
+
+- UI: `http://localhost/swagger`
+- OpenAPI JSON: `http://localhost/swagger/openapi.json`
+
+Swagger описывает все три endpoint'а:
+- создание объявления
+- получение объявления по ID
+- получение списка объявлений
 
 ## Примечания
 
 - Миграции созданы в соответствии с заданием.
 - Администратор создается миграцией автоматически.
 - Технические характеристики автомобиля опциональны, но при передаче обязательны все поля.
+- В БД связь `car -> car_option` реализована как optional has-one.
 - Для списка объявлений используется пагинация по 10 элементов.
+- DataMapper добавлен и используется в PostgreSQL-репозитории для преобразования ActiveRecord в доменную сущность.
 
 ## Затраченное время
 
-Оценка на реализацию данного проекта: 5 часов.
-
-
-## Важное замечание по Composer
-
-В проект добавлен репозиторий `asset-packagist`, потому что Yii2 зависит от пакетов `bower-asset/*`.
-Если запускать `composer install` без этого репозитория, установка завершится ошибкой вида `bower-asset/jquery could not be found`.
+Оценка на реализацию данного проекта: 6 часов.

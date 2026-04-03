@@ -5,117 +5,60 @@ declare(strict_types=1);
 namespace app\modules\admin\controllers;
 
 use app\infrastructure\Persistence\ActiveRecord\UserRecord;
-use Yii;
 use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 
 class UserController extends BaseAdminController
 {
-    public function behaviors(): array
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['verbs'] = [
-            'class' => VerbFilter::class,
-            'actions' => [
-                'delete' => ['POST'],
-            ],
-        ];
-
-        return $behaviors;
-    }
-
     public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => UserRecord::find()->orderBy(['id' => SORT_DESC]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
+            'pagination' => ['pageSize' => 20],
         ]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', compact('dataProvider'));
     }
 
-    public function actionView(int $id): string
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    public function actionCreate(): string|Response
+    public function actionCreate()
     {
         $model = new UserRecord();
-        $model->created_at = date('Y-m-d H:i:s');
-
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->plain_password !== '') {
-                $model->setPassword($model->plain_password);
-            }
-
-            if (empty($model->auth_key)) {
-                $model->auth_key = Yii::$app->security->generateRandomString();
-            }
-
+        if ($model->load(\Yii::$app->request->post())) {
+            $model->setPassword((string)$model->password_hash);
+            $model->auth_key = bin2hex(random_bytes(16));
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'Пользователь успешно создан.');
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
         }
-
-        return $this->render('form', [
-            'model' => $model,
-        ]);
+        return $this->render('form', compact('model'));
     }
 
-    public function actionUpdate(int $id): string|Response
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $model->plain_password = '';
-
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->plain_password !== '') {
-                $model->setPassword($model->plain_password);
+        if ($model->load(\Yii::$app->request->post())) {
+            if (!empty($model->password_hash) && strlen($model->password_hash) < 60) {
+                $model->setPassword((string)$model->password_hash);
             }
-
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'Пользователь успешно обновлён.');
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
         }
-
-        return $this->render('form', [
-            'model' => $model,
-        ]);
+        return $this->render('form', compact('model'));
     }
 
-    public function actionDelete(int $id): Response
+    public function actionDelete(int $id)
     {
-        $user = $this->findModel($id);
-
-        if ((string) $user->username === 'admin') {
-            Yii::$app->session->setFlash('error', 'Нельзя удалить администратора admin.');
-            return $this->redirect(['index']);
-        }
-
-        $user->delete();
-        Yii::$app->session->setFlash('success', 'Пользователь удалён.');
-
+        $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
 
     private function findModel(int $id): UserRecord
     {
         $model = UserRecord::findOne($id);
-
         if ($model === null) {
-            throw new NotFoundHttpException('Пользователь не найден.');
+            throw new NotFoundHttpException('User not found.');
         }
-
         return $model;
     }
 }

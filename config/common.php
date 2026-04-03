@@ -5,7 +5,10 @@ declare(strict_types=1);
 use app\application\Service\CreateCarService;
 use app\application\Service\GetCarByIdService;
 use app\application\Service\ListCarsService;
+use app\application\Service\Swagger\OpenApiSpecificationBuilder;
+use app\domain\DataMapper\CarDataMapperInterface;
 use app\domain\Repository\CarRepositoryInterface;
+use app\infrastructure\Persistence\DataMapper\CarDataMapper;
 use app\infrastructure\Persistence\Repository\PgCarRepository;
 use yii\db\Connection;
 use yii\log\FileTarget;
@@ -24,10 +27,12 @@ return [
     ],
     'container' => [
         'singletons' => [
+            CarDataMapperInterface::class => CarDataMapper::class,
             CarRepositoryInterface::class => PgCarRepository::class,
             CreateCarService::class => CreateCarService::class,
             GetCarByIdService::class => GetCarByIdService::class,
             ListCarsService::class => ListCarsService::class,
+            OpenApiSpecificationBuilder::class => OpenApiSpecificationBuilder::class,
         ],
     ],
     'components' => [

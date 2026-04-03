@@ -18,11 +18,6 @@ final class Car
     ) {
     }
 
-    /**
-     * @param int $id
-     * @param string $createdAt
-     * @return self
-     */
     public function withIdAndCreatedAt(int $id, string $createdAt): self
     {
         return new self(
@@ -43,11 +38,11 @@ final class Car
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'price' => (float)$this->price,
+            'price' => (float) $this->price,
             'photo_url' => $this->photoUrl,
             'contacts' => $this->contacts,
             'created_at' => $this->createdAt,
-            'options' => $this->options?->toArray(),
+            'options' => $this->options !== null ? [$this->options->toArray()] : null,
         ];
     }
 }

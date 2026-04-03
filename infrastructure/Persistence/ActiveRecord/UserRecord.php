@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace app\infrastructure\Persistence\ActiveRecord;
 
-use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 class UserRecord extends ActiveRecord implements IdentityInterface
 {
-    public string $plain_password = '';
-
     public static function tableName(): string
     {
         return '{{%user}}';
@@ -20,33 +17,11 @@ class UserRecord extends ActiveRecord implements IdentityInterface
     public function rules(): array
     {
         return [
-            [['username'], 'required'],
+            [['username', 'password_hash'], 'required'],
             [['created_at'], 'safe'],
-            [['username', 'password_hash', 'auth_key', 'plain_password'], 'string', 'max' => 255],
+            [['username', 'password_hash', 'auth_key'], 'string', 'max' => 255],
             [['username'], 'unique'],
-            ['plain_password', 'required', 'on' => 'create'],
         ];
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'username' => 'Логин',
-            'password_hash' => 'Хэш пароля',
-            'plain_password' => 'Пароль',
-            'auth_key' => 'Ключ авторизации',
-            'created_at' => 'Дата создания',
-        ];
-    }
-
-    public function beforeValidate(): bool
-    {
-        if ($this->isNewRecord) {
-            $this->scenario = 'create';
-        }
-
-        return parent::beforeValidate();
     }
 
     public static function findIdentity($id): ?IdentityInterface
@@ -81,11 +56,11 @@ class UserRecord extends ActiveRecord implements IdentityInterface
 
     public function validatePassword(string $password): bool
     {
-        return Yii::$app->security->validatePassword($password, (string) $this->password_hash);
+        return \Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
     public function setPassword(string $password): void
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash = \Yii::$app->security->generatePasswordHash($password);
     }
 }
